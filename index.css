@@ -1,0 +1,273 @@
+/* 五年级古诗词应用 - 自定义样式 */
+
+/* 淡入上移动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* 旋转动画 */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 动画类 */
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* 竖排文字 */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+.writing-vertical-lr {
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+}
+
+/* 图片滤镜 */
+.sepia-\[\.3\] {
+  filter: sepia(0.3);
+}
+
+.contrast-125 {
+  filter: contrast(1.25);
+}
+
+/* 玻璃效果 */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* 过渡效果 */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* 缩放效果 */
+.active\:scale-95:active {
+  transform: scale(0.95);
+}
+
+.group:hover .group-hover\:translate-x-1 {
+  transform: translateX(0.25rem);
+}
+
+.group:hover .group-hover\:text-ink-500 {
+  color: #57534e;
+}
+
+.group:hover .group-hover\:text-cinnabar-700 {
+  color: #991b1b;
+}
+
+/* 诗卷选择卡片悬停效果 */
+.poem-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.poem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.poem-card:hover::before {
+  left: 100%;
+}
+
+/* 自定义滚动条 - 水墨风格 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f7f3e8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #57534e, #78716c);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #44403c, #57534e);
+}
+
+/* 选择高亮禁用效果 */
+.select-none {
+  user-select: none;
+}
+
+/* 图片容器覆盖渐变 */
+.image-overlay {
+  position: relative;
+}
+
+.image-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(28, 25, 23, 0.3), transparent);
+  pointer-events: none;
+}
+
+/* 印章效果 */
+.seal-stamp {
+  position: relative;
+  display: inline-block;
+}
+
+.seal-stamp::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid currentColor;
+  border-radius: 8px;
+  transform: rotate(3deg);
+  opacity: 0.3;
+}
+
+/* 墨迹效果边框 */
+.ink-border {
+  position: relative;
+}
+
+.ink-border::before,
+.ink-border::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+
+.ink-border::before {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+}
+
+.ink-border::after {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 2px;
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+  .font-calligraphy {
+    font-size: 0.9em;
+  }
+  
+  .tracking-widest {
+    letter-spacing: 0.1em;
+  }
+}
+
+/* 焦点可见性 - 无障碍 */
+:focus-visible {
+  outline: 2px solid #991b1b;
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* 打印样式 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+}

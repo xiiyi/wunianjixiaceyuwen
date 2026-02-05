@@ -1,0 +1,7 @@
+{
+  "name": "Chinese Poetry Master & Tutor",
+  "description": "An interactive Grade 5 Chinese poetry learning app featuring a structured quiz (Image to Verse, Typos, Keywords, Themes) and a real-time AI Voice Tutor using Gemini Live API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
