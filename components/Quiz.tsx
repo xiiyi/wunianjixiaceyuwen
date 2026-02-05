@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { QuizState, QuestionType, Poem } from '../types';
 import { generatePoemIllustration } from '../utils/genai';
 
 interface QuizProps {
   poem: Poem;
+  questionType: QuestionType;
   onExit: () => void;
 }
 
-const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
+const Quiz: React.FC<QuizProps> = ({ poem, questionType, onExit }) => {
+  // Filter questions by the selected type
+  const filteredQuestions = useMemo(() => {
+    return poem.questions.filter(q => q.type === questionType);
+  }, [poem.questions, questionType]);
+
   const [state, setState] = useState<QuizState>({
     currentQuestionIndex: 0,
     score: 0,
@@ -18,7 +24,7 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
     isGeneratingImage: false,
   });
 
-  const currentQuestion = poem.questions[state.currentQuestionIndex];
+  const currentQuestion = filteredQuestions[state.currentQuestionIndex];
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -47,7 +53,7 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
   };
 
   const nextQuestion = () => {
-    if (state.currentQuestionIndex + 1 >= poem.questions.length) {
+    if (state.currentQuestionIndex + 1 >= filteredQuestions.length) {
       setState(prev => ({ ...prev, isComplete: true }));
     } else {
       setState(prev => ({
@@ -74,7 +80,7 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
 
   // Completion Screen - Seal Style
   if (state.isComplete) {
-    const percentage = Math.round((state.score / poem.questions.length) * 100);
+    const percentage = Math.round((state.score / filteredQuestions.length) * 100);
     return (
       <div className="max-w-2xl mx-auto bg-paper-50 border-double border-4 border-ink-800 p-8 text-center shadow-lg relative overflow-hidden">
         {/* Decorative Corners */}
@@ -84,15 +90,15 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
         <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-ink-800"></div>
 
         <h2 className="text-4xl font-calligraphy text-ink-900 mb-8 mt-4 tracking-widest">{poem.title} · 通关</h2>
-        
+
         <div className="relative inline-block mb-10 group">
           {/* Seal Style Score */}
           <div className="w-40 h-40 border-4 border-cinnabar-700 rounded-xl flex flex-col items-center justify-center transform rotate-3 mx-auto shadow-inner bg-paper-50 text-cinnabar-700">
-             <span className="font-calligraphy text-2xl mb-1 writing-vertical">得分</span>
-             <span className="font-serif text-5xl font-bold border-t-2 border-b-2 border-cinnabar-700 py-1 px-4">{percentage}</span>
+            <span className="font-calligraphy text-2xl mb-1 writing-vertical">得分</span>
+            <span className="font-serif text-5xl font-bold border-t-2 border-b-2 border-cinnabar-700 py-1 px-4">{percentage}</span>
           </div>
           <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-ink-500 font-serif text-sm">
-             答对 {state.score} / {poem.questions.length} 题
+            答对 {state.score} / {filteredQuestions.length} 题
           </div>
         </div>
 
@@ -119,20 +125,20 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
     let label = '';
     let colorClass = '';
     switch (type) {
-      case QuestionType.ImageToVerse: 
-        label = '画中诗'; 
+      case QuestionType.ImageToVerse:
+        label = '画中诗';
         colorClass = 'text-jade-800 border-jade-800 bg-emerald-50';
         break;
-      case QuestionType.TypoCorrection: 
-        label = '正字音'; 
+      case QuestionType.TypoCorrection:
+        label = '正字音';
         colorClass = 'text-amber-800 border-amber-800 bg-amber-50';
         break;
-      case QuestionType.KeywordTranslation: 
-        label = '解词义'; 
+      case QuestionType.KeywordTranslation:
+        label = '解词义';
         colorClass = 'text-indigo-900 border-indigo-900 bg-blue-50';
         break;
-      case QuestionType.ThemeUnderstanding: 
-        label = '悟诗情'; 
+      case QuestionType.ThemeUnderstanding:
+        label = '悟诗情';
         colorClass = 'text-cinnabar-800 border-cinnabar-800 bg-rose-50';
         break;
     }
@@ -148,10 +154,10 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
       {/* Navigation */}
       <div className="flex items-center justify-between mb-6 border-b border-ink-800/30 pb-2">
         <button onClick={onExit} className="text-ink-800 hover:text-cinnabar-700 font-bold text-sm flex items-center transition-colors">
-            <span className="text-xl mr-1">‹</span> 返回
+          <span className="text-xl mr-1">‹</span> 返回
         </button>
         <div className="text-ink-500 font-serif text-sm tracking-widest">
-           {poem.title} · 第 <span className="font-bold text-ink-900 text-lg">{state.currentQuestionIndex + 1}</span> / {poem.questions.length} 题
+          {poem.title} · 第 <span className="font-bold text-ink-900 text-lg">{state.currentQuestionIndex + 1}</span> / {filteredQuestions.length} 题
         </div>
       </div>
 
@@ -159,8 +165,8 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
       <div className="w-full bg-stone-200 h-1 mb-8 relative overflow-hidden rounded-sm">
         <div
           className="bg-ink-800 h-full absolute top-0 left-0 transition-all duration-700 ease-out"
-          style={{ 
-            width: `${((state.currentQuestionIndex + 1) / poem.questions.length) * 100}%`,
+          style={{
+            width: `${((state.currentQuestionIndex + 1) / filteredQuestions.length) * 100}%`,
             backgroundImage: 'linear-gradient(45deg, #292524 25%, #44403c 25%, #44403c 50%, #292524 50%, #292524 75%, #44403c 75%, #44403c 100%)',
             backgroundSize: '10px 10px'
           }}
@@ -171,7 +177,7 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
       <div className="bg-paper-50 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.1)] border border-stone-300 relative">
         {/* Double border effect for framing */}
         <div className="border-4 border-double border-stone-200 p-1 m-1">
-          
+
           {/* Image Generation Section */}
           {currentQuestion.type === QuestionType.ImageToVerse && (
             <div className="w-full h-72 bg-stone-100 border-b-2 border-stone-200 flex items-center justify-center overflow-hidden relative mb-4">
@@ -189,7 +195,7 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
                 <div className="text-stone-400 text-sm italic">画卷未展</div>
               )}
               <div className="absolute top-4 right-4 bg-paper-50/90 text-ink-900 text-xs px-2 py-1 border border-ink-800 shadow-sm font-serif writing-vertical-lr">
-                  AI 绘意
+                AI 绘意
               </div>
             </div>
           )}
@@ -200,14 +206,14 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
                 {getTypeBadge(currentQuestion.type)}
               </div>
               <p className="text-xl md:text-2xl text-ink-900 leading-relaxed font-serif font-medium">
-                  {currentQuestion.questionText}
+                {currentQuestion.questionText}
               </p>
             </div>
 
             <div className="space-y-4">
               {currentQuestion.options.map((option, idx) => {
                 let buttonStyle = "bg-paper-50 border-stone-300 text-ink-800 hover:border-ink-500 hover:bg-stone-50";
-                
+
                 if (state.showFeedback) {
                   if (option === currentQuestion.correctAnswer) {
                     buttonStyle = "bg-emerald-50 border-jade-800 text-jade-800 shadow-[inset_0_0_0_1px_#166534]";
@@ -236,9 +242,9 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
 
             {state.showFeedback && (
               <div className="mt-8 p-6 bg-stone-50 border-t-2 border-stone-200 animate-fade-in relative">
-                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-paper-50 px-4 border border-stone-200 text-stone-500 text-sm tracking-widest">
-                    解析
-                 </div>
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-paper-50 px-4 border border-stone-200 text-stone-500 text-sm tracking-widest">
+                  解析
+                </div>
                 <div className="flex items-start gap-4">
                   <div className={`text-3xl ${state.selectedOption === currentQuestion.correctAnswer ? 'text-jade-700' : 'text-cinnabar-700'}`}>
                     {state.selectedOption === currentQuestion.correctAnswer ? '✓' : '✗'}
@@ -256,7 +262,7 @@ const Quiz: React.FC<QuizProps> = ({ poem, onExit }) => {
                     className="group flex items-center gap-2 text-ink-900 font-bold hover:text-cinnabar-700 transition-colors"
                   >
                     <span className="font-serif tracking-widest text-lg">
-                       {state.currentQuestionIndex + 1 >= poem.questions.length ? '查看榜单' : '下一题'}
+                      {state.currentQuestionIndex + 1 >= filteredQuestions.length ? '查看榜单' : '下一题'}
                     </span>
                     <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
                   </button>
